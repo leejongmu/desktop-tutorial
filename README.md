@@ -35,13 +35,24 @@ export ANTHROPIC_API_KEY=your_api_key_here
 python research_bot.py
 ```
 
+### GitHub Pages (서버 없이 아이패드에서 바로 사용)
+
+1. GitHub 저장소 → **Settings → Pages**
+2. Source: **Deploy from a branch**
+3. Branch: `main` / Folder: `/web` 선택 → Save
+4. 몇 분 후 생성된 URL을 iPad Safari에서 접속
+5. 처음 실행 시 Anthropic API 키 입력 (기기에만 저장됨)
+
+> API 키: [console.anthropic.com](https://console.anthropic.com) → API Keys
+
 ## 파일 구성
 
 ```
-app.py                 # FastAPI 웹 서버 (SSE 스트리밍)
+web/index.html         # 순수 브라우저 앱 (서버 불필요, GitHub Pages 배포용)
+app.py                 # FastAPI 웹 서버 (로컬 실행용, SSE 스트리밍)
 research_bot.py        # CLI 챗 인터페이스
-tools.py               # 도구 구현체 (Semantic Scholar, arXiv, CrossRef API)
-templates/index.html   # 아이패드 최적화 채팅 UI
+tools.py               # Python 도구 구현체 (Semantic Scholar, arXiv, CrossRef)
+templates/index.html   # FastAPI 서버용 채팅 UI
 requirements.txt       # Python 의존성
 ```
 

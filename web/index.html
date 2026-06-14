@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>논문 서포팅 봇</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f1f5f9; --surface: #fff; --primary: #2563eb; --primary-dk: #1d4ed8;
+      --user-bg: #2563eb; --user-fg: #fff;
+      --bot-bg: #fff; --bot-fg: #1e293b;
+      --tool-bg: #f8fafc; --tool-bd: #e2e8f0; --tool-fg: #64748b;
+      --muted: #94a3b8; --border: #e2e8f0;
+      --radius: 18px; --radius-sm: 10px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+    html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--bot-fg); -webkit-text-size-adjust: 100%; }
+
+    /* ── Layout ── */
+    #app { display: flex; flex-direction: column; height: 100dvh; max-width: 800px; margin: 0 auto; }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,.07);
+    }
+    .h-left { display: flex; align-items: center; gap: 10px; }
+    .h-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .h-title { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.2; }
+    .h-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .h-right { display: flex; gap: 8px; }
+    .btn-sm {
+      background: none; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 7px 11px; font-size: 13px; font-weight: 500; color: #475569;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-sm:active { background: #f1f5f9; }
+
+    /* ── Messages ── */
+    #msgs {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+
+    /* Welcome */
+    .welcome { text-align: center; padding: 28px 8px; color: var(--muted); }
+    .welcome-icon { font-size: 48px; margin-bottom: 12px; }
+    .welcome h2 { font-size: 18px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    .welcome p { font-size: 14px; line-height: 1.6; }
+    .chips { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; text-align: left; }
+    .chip {
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 11px 13px; font-size: 13px; color: #334155; cursor: pointer; text-align: left;
+      line-height: 1.4; -webkit-tap-highlight-color: transparent;
+    }
+    .chip:active { background: #f8fafc; border-color: var(--primary); }
+
+    /* Bubbles */
+    .msg { display: flex; flex-direction: column; max-width: 88%; animation: fadeUp .18s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.bot { align-self: flex-start; align-items: flex-start; }
+    .bubble { padding: 11px 15px; border-radius: var(--radius); font-size: 15px; line-height: 1.65; word-break: break-word; white-space: pre-wrap; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+    .msg.user .bubble { background: var(--user-bg); color: var(--user-fg); border-bottom-right-radius: 5px; }
+    .msg.bot .bubble { background: var(--bot-bg); color: var(--bot-fg); border-bottom-left-radius: 5px; }
+    .msg-meta { font-size: 11px; color: var(--muted); margin-top: 4px; padding: 0 3px; display: flex; gap: 8px; align-items: center; }
+    .copy-btn { background: none; border: none; font-size: 11px; color: var(--muted); cursor: pointer; padding: 1px 5px; border-radius: 4px; }
+    .copy-btn:active { background: #f1f5f9; }
+
+    /* Tool call */
+    .tool-call { background: var(--tool-bg); border: 1px solid var(--tool-bd); border-radius: var(--radius-sm); font-size: 12px; align-self: flex-start; max-width: 88%; overflow: hidden; }
+    .tool-summary { display: flex; align-items: center; gap: 6px; padding: 8px 12px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .tool-name { font-weight: 600; color: #475569; flex: 1; }
+    .status-pill { font-size: 11px; padding: 2px 7px; border-radius: 99px; }
+    .running { background: #dbeafe; color: #1d4ed8; }
+    .ok { background: #dcfce7; color: #15803d; }
+    .err { background: #fee2e2; color: #b91c1c; }
+    .tool-detail { font-family: 'SF Mono', monospace; font-size: 11px; color: #64748b; padding: 0 12px 8px; display: none; }
+    .tool-call.open .tool-detail { display: block; }
+
+    /* Thinking */
+    .thinking-row { display: flex; align-items: center; gap: 8px; background: #eff6ff; color: #3b82f6; border-radius: var(--radius-sm); padding: 9px 13px; font-size: 13px; font-weight: 500; align-self: flex-start; }
+    .dots { display: flex; gap: 4px; }
+    .dot { width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; animation: bounce .9s infinite; }
+    .dot:nth-child(2) { animation-delay: .15s; }
+    .dot:nth-child(3) { animation-delay: .3s; }
+    @keyframes bounce { 0%,60%,100% { transform: none; } 30% { transform: translateY(-5px); } }
+
+    /* ── Input ── */
+    #input-area {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); flex-shrink: 0;
+    }
+    .input-row { display: flex; align-items: flex-end; gap: 10px; }
+    #msg-input {
+      flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 10px 14px; font-size: 15px; font-family: var(--font); line-height: 1.5;
+      resize: none; outline: none; max-height: 140px; overflow-y: auto;
+      -webkit-overflow-scrolling: touch; color: var(--bot-fg);
+    }
+    #msg-input:focus { border-color: var(--primary); }
+    #msg-input::placeholder { color: var(--muted); }
+    #send-btn {
+      width: 42px; height: 42px; background: var(--primary); border: none; border-radius: 12px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #send-btn:active { background: var(--primary-dk); }
+    #send-btn:disabled { background: var(--muted); cursor: not-allowed; }
+
+    /* ── API Key Modal ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+    }
+    .modal-backdrop.hidden { display: none; }
+    .modal {
+      background: var(--surface); border-radius: 20px; padding: 28px 24px;
+      width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .modal p { font-size: 14px; color: #475569; line-height: 1.55; margin-bottom: 18px; }
+    .modal label { font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
+    .modal input[type=password] {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 11px 13px; font-size: 15px; outline: none; font-family: monospace;
+    }
+    .modal input[type=password]:focus { border-color: var(--primary); }
+    .modal-hint { font-size: 12px; color: var(--muted); margin-top: 8px; margin-bottom: 20px; }
+    .btn-primary {
+      width: 100%; background: var(--primary); color: #fff; border: none; border-radius: 12px;
+      padding: 13px; font-size: 16px; font-weight: 600; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary:active { background: var(--primary-dk); }
+    .modal-error { font-size: 13px; color: #b91c1c; margin-top: 8px; min-height: 18px; }
+  </style>
+</head>
+<body>
+
+<!-- API Key Modal -->
+<div class="modal-backdrop hidden" id="key-modal">
+  <div class="modal">
+    <h2>🔑 API 키 설정</h2>
+    <p>Anthropic API 키를 입력하세요.<br>키는 이 기기에만 저장되며 외부로 전송되지 않습니다.</p>
+    <label for="key-input">Anthropic API Key</label>
+    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off" autocorrect="off" spellcheck="false">
+    <p class="modal-hint">키 발급: <strong>console.anthropic.com</strong> → API Keys</p>
+    <button class="btn-primary" id="key-save">저장하고 시작하기</button>
+    <div class="modal-error" id="key-error"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="h-left">
+      <div class="h-icon">📚</div>
+      <div>
+        <div class="h-title">논문 서포팅 봇</div>
+        <div class="h-sub">학술 검색 · 인용 검증 · 초안 작성</div>
+      </div>
+    </div>
+    <div class="h-right">
+      <button class="btn-sm" id="key-btn">🔑 키</button>
+      <button class="btn-sm" id="new-btn">새 대화</button>
+    </div>
+  </header>
+
+  <div id="msgs">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🎓</div>
+      <h2>논문 작성을 도와드릴게요</h2>
+      <p>학술 논문 검색, 인용 검증, 내용 요약,<br>초안 작성까지 지원합니다.</p>
+      <div class="chips">
+        <button class="chip">🔍 transformer attention mechanism 관련 최신 논문 찾아줘</button>
+        <button class="chip">✅ DOI 10.48550/arXiv.1706.03762 인용 정보 검증해줘</button>
+        <button class="chip">✍️ 딥러닝 기반 자연어처리 서론 초안 작성 도와줘</button>
+        <button class="chip">📝 RAG(Retrieval Augmented Generation) 핵심 논문 목록 정리해줘</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="input-area">
+    <div class="input-row">
+      <textarea id="msg-input" rows="1" placeholder="메시지를 입력하세요…"></textarea>
+      <button id="send-btn" aria-label="전송">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Constants ── */
+const MODEL = 'claude-opus-4-8';
+const API_URL = 'https://api.anthropic.com/v1/messages';
+const KEY_STORE = 'paper_bot_api_key';
+
+const SYSTEM_PROMPT = `당신은 논문 작성을 돕는 전문 학술 연구 어시스턴트입니다.
+
+주요 기능: 학술 논문 검색(Semantic Scholar/arXiv), 인용 검증(CrossRef DOI), 내용 요약, 초안 작성.
+
+행동 지침:
+1. 관련 논문을 적극적으로 검색하여 구체적인 근거를 제시하세요
+2. 인용 논문은 반드시 DOI로 검증하고 APA 형식으로 제공하세요
+3. 논문 요약 시 핵심 기여·방법론·주요 결과를 포함하세요
+4. 초안 작성 시 학술적 문체와 논리적 흐름을 유지하세요
+5. 한국어로 소통하되 학술 용어는 영어 원어와 병기하세요
+6. 검색 결과는 번호 목록으로 정리하고 저자·연도·제목·저널 순으로 표시하세요`;
+
+const TOOL_DEFS = [
+  {
+    name: 'search_papers',
+    description: 'Semantic Scholar API로 학술 논문 검색. 제목·초록·인용수·DOI 반환.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: '검색 쿼리 (키워드, 저자, 제목 등)' },
+        max_results: { type: 'integer', description: '최대 결과 수 (기본 10, 최대 20)', default: 10 }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'search_arxiv',
+    description: 'arXiv에서 프리프린트 논문 검색. CS·물리·수학 등 최신 연구에 유용.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: '검색 쿼리' },
+        max_results: { type: 'integer', description: '최대 결과 수 (기본 10, 최대 20)', default: 10 }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'verify_citation',
+    description: 'CrossRef API로 DOI 기반 인용 검증 및 APA 형식 서지 정보 생성.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        doi: { type: 'string', description: "논문 DOI (예: '10.1038/nature12345')" }
+      },
+      required: ['doi']
+    }
+  },
+  {
+    name: 'get_paper_details',
+    description: 'Semantic Scholar에서 특정 논문 상세 정보 조회 (전체 초록·인용·참고문헌·TL;DR).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        paper_id: {
+          type: 'string',
+          description: "논문 ID. 형식: Semantic Scholar ID, 'DOI:10.xxx', 'ARXIV:2301.xxxxx'"
+        }
+      },
+      required: ['paper_id']
+    }
+  }
+];
+
+/* ── Tool Implementations (JavaScript) ── */
+async function searchPapers(query, max_results = 10) {
+  const limit = Math.min(Math.max(1, max_results || 10), 20);
+  const fields = 'title,abstract,authors,year,citationCount,externalIds,openAccessPdf,url';
+  const url = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(query)}&limit=${limit}&fields=${fields}`;
+  const res = await fetch(url);
+  if (!res.ok) return JSON.stringify({ error: `Semantic Scholar API 오류: ${res.status}`, is_error: true });
+  const data = await res.json();
+  const results = (data.data || []).map(p => ({
+    title: p.title || '',
+    authors: (p.authors || []).map(a => a.name),
+    year: p.year,
+    citation_count: p.citationCount,
+    abstract: (p.abstract || '').slice(0, 500),
+    doi: (p.externalIds || {}).DOI || '',
+    open_access_pdf: (p.openAccessPdf || {}).url || '',
+    semantic_scholar_url: p.url || ''
+  }));
+  return JSON.stringify({ results, total_found: data.total || results.length });
+}
+
+async function searchArxiv(query, max_results = 10) {
+  const limit = Math.min(Math.max(1, max_results || 10), 20);
+  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&max_results=${limit}&sortBy=relevance&sortOrder=descending`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return JSON.stringify({ error: `arXiv API 오류: ${res.status}`, is_error: true });
+    const text = await res.text();
+    const xml = new DOMParser().parseFromString(text, 'text/xml');
+    const entries = xml.querySelectorAll('entry');
+    const results = Array.from(entries).map(e => {
+      const rawId = e.querySelector('id')?.textContent || '';
+      const arxivId = rawId.split('/abs/').pop() || '';
+      return {
+        title: (e.querySelector('title')?.textContent || '').replace(/\s+/g, ' ').trim(),
+        authors: Array.from(e.querySelectorAll('author name')).map(n => n.textContent),
+        year: (e.querySelector('published')?.textContent || '').slice(0, 4),
+        arxiv_id: arxivId,
+        abstract: (e.querySelector('summary')?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 500),
+        arxiv_url: rawId,
+        pdf_url: `https://arxiv.org/pdf/${arxivId}`
+      };
+    });
+    return JSON.stringify({ results });
+  } catch (e) {
+    return JSON.stringify({ error: `arXiv 검색 오류: ${e.message}`, is_error: true });
+  }
+}
+
+async function verifyCitation(doi) {
+  const clean = doi.trim().replace(/^https?:\/\/doi\.org\//, '').replace(/^doi:/i, '');
+  const res = await fetch(`https://api.crossref.org/works/${encodeURIComponent(clean)}`);
+  if (res.status === 404) return JSON.stringify({ valid: false, message: `DOI 없음: ${clean}` });
+  if (!res.ok) return JSON.stringify({ error: `CrossRef API 오류: ${res.status}`, is_error: true });
+  const json = await res.json();
+  const d = json.message || {};
+  const authors = (d.author || []).map(a => `${a.given || ''} ${a.family || ''}`.trim());
+  const issued = ((d.issued || {})['date-parts'] || [[]])[0];
+  const year = issued[0];
+  const journal = (d['container-title'] || [''])[0];
+  const title = (d.title || [''])[0];
+  let authorStr = authors.slice(0, 6).join(', ');
+  if (authors.length > 6) authorStr += ' et al.';
+  let cite = `${authorStr} (${year || 'n.d.'}). "${title}".`;
+  if (journal) {
+    let j = journal;
+    if (d.volume) j += ` ${d.volume}`;
+    if (d.issue) j += `(${d.issue})`;
+    if (d.page) j += `: ${d.page}`;
+    cite += ` ${j}.`;
+  }
+  if (d.DOI) cite += ` https://doi.org/${d.DOI}`;
+  return JSON.stringify({ valid: true, doi: clean, title, authors, year, journal, volume: d.volume, issue: d.issue, pages: d.page, publisher: d.publisher, url: d.URL, formatted_citation: cite });
+}
+
+async function getPaperDetails(paper_id) {
+  const fields = 'title,abstract,authors,year,citationCount,referenceCount,citations,references,externalIds,openAccessPdf,url,venue,publicationDate,tldr';
+  const res = await fetch(`https://api.semanticscholar.org/graph/v1/paper/${encodeURIComponent(paper_id)}?fields=${fields}`);
+  if (res.status === 404) return JSON.stringify({ error: `논문 없음: ${paper_id}`, is_error: true });
+  if (!res.ok) return JSON.stringify({ error: `API 오류: ${res.status}`, is_error: true });
+  const p = await res.json();
+  return JSON.stringify({
+    title: p.title || '',
+    authors: (p.authors || []).map(a => a.name),
+    year: p.year,
+    venue: p.venue || '',
+    publication_date: p.publicationDate,
+    citation_count: p.citationCount,
+    reference_count: p.referenceCount,
+    abstract: p.abstract || '',
+    tldr: (p.tldr || {}).text || '',
+    doi: (p.externalIds || {}).DOI || '',
+    open_access_pdf: (p.openAccessPdf || {}).url || '',
+    semantic_scholar_url: p.url || '',
+    top_citations: (p.citations || []).slice(0, 5).map(c => ({ title: c.title, year: c.year })),
+    key_references: (p.references || []).slice(0, 10).map(r => ({ title: r.title, year: r.year }))
+  });
+}
+
+async function executeTool(name, input) {
+  switch (name) {
+    case 'search_papers': return await searchPapers(input.query, input.max_results);
+    case 'search_arxiv': return await searchArxiv(input.query, input.max_results);
+    case 'verify_citation': return await verifyCitation(input.doi);
+    case 'get_paper_details': return await getPaperDetails(input.paper_id);
+    default: return JSON.stringify({ error: `Unknown tool: ${name}`, is_error: true });
+  }
+}
+
+/* ── Anthropic API Streaming ── */
+async function* streamClaude(messages, apiKey) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({ model: MODEL, max_tokens: 16000, stream: true, system: SYSTEM_PROMPT, tools: TOOL_DEFS, messages })
+  });
+
+  if (!res.ok) {
+    let msg = `API 오류 ${res.status}`;
+    try { const e = await res.json(); msg = e.error?.message || msg; } catch {}
+    throw new Error(msg);
+  }
+
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  const blocks = {};
+  let stopReason = 'end_turn';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      let data;
+      try { data = JSON.parse(line.slice(6)); } catch { continue; }
+
+      switch (data.type) {
+        case 'content_block_start':
+          blocks[data.index] = { ...data.content_block, _json: '' };
+          break;
+
+        case 'content_block_delta': {
+          const b = blocks[data.index];
+          if (!b) break;
+          const d = data.delta;
+          if (d.type === 'text_delta') {
+            b.text = (b.text || '') + d.text;
+            if (b.type === 'text') yield { type: 'text', content: d.text };
+          } else if (d.type === 'input_json_delta') {
+            b._json += d.partial_json;
+          } else if (d.type === 'thinking_delta') {
+            b.thinking = (b.thinking || '') + d.thinking;
+          } else if (d.type === 'signature_delta') {
+            b.signature = d.signature;
+          }
+          break;
+        }
+
+        case 'content_block_stop': {
+          const b = blocks[data.index];
+          if (b?.type === 'tool_use') {
+            try { b.input = JSON.parse(b._json || '{}'); } catch { b.input = {}; }
+          }
+          if (b) delete b._json;
+          break;
+        }
+
+        case 'message_delta':
+          if (data.delta?.stop_reason) stopReason = data.delta.stop_reason;
+          break;
+      }
+    }
+  }
+
+  const content = Object.keys(blocks).sort((a, b) => +a - +b).map(k => {
+    const b = { ...blocks[k] };
+    delete b._json;
+    return b;
+  });
+
+  yield { type: 'message_done', content, stopReason };
+}
+
+/* ── Agentic Loop ── */
+let sessionMessages = [];
+
+async function* runLoop(userMessage, apiKey) {
+  sessionMessages.push({ role: 'user', content: userMessage });
+
+  while (true) {
+    let assistantContent = [];
+    let stopReason = 'end_turn';
+
+    for await (const ev of streamClaude(sessionMessages, apiKey)) {
+      if (ev.type === 'text') yield ev;
+      else if (ev.type === 'message_done') {
+        assistantContent = ev.content;
+        stopReason = ev.stopReason;
+      }
+    }
+
+    sessionMessages.push({ role: 'assistant', content: assistantContent });
+
+    if (stopReason === 'end_turn') {
+      yield { type: 'done' };
+      return;
+    }
+
+    if (stopReason === 'tool_use') {
+      const toolResults = [];
+      for (const block of assistantContent) {
+        if (block.type !== 'tool_use') continue;
+        yield { type: 'tool_start', name: block.name, args: block.input || {} };
+        let result;
+        try {
+          result = await executeTool(block.name, block.input || {});
+          yield { type: 'tool_end', name: block.name, status: 'ok' };
+        } catch (e) {
+          result = JSON.stringify({ error: e.message, is_error: true });
+          yield { type: 'tool_end', name: block.name, status: 'error' };
+        }
+        toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: result });
+      }
+      sessionMessages.push({ role: 'user', content: toolResults });
+      yield { type: 'thinking' };
+      continue;
+    }
+
+    if (stopReason === 'pause_turn') continue;
+
+    yield { type: 'done' };
+    return;
+  }
+}
+
+/* ── UI ── */
+const msgsEl = document.getElementById('msgs');
+const welcomeEl = document.getElementById('welcome');
+const inputEl = document.getElementById('msg-input');
+const sendBtn = document.getElementById('send-btn');
+const newBtn = document.getElementById('new-btn');
+const keyBtn = document.getElementById('key-btn');
+const keyModal = document.getElementById('key-modal');
+const keyInput = document.getElementById('key-input');
+const keySave = document.getElementById('key-save');
+const keyError = document.getElementById('key-error');
+
+const TOOL_LABELS = {
+  search_papers: '논문 검색 (Semantic Scholar)',
+  search_arxiv: 'arXiv 검색',
+  verify_citation: '인용 검증 (CrossRef)',
+  get_paper_details: '논문 상세 조회'
+};
+
+let isStreaming = false;
+let currentBubble = null;
+let currentText = '';
+let thinkEl = null;
+const pendingTools = {};
+
+function getApiKey() { return localStorage.getItem(KEY_STORE) || ''; }
+function saveApiKey(k) { localStorage.setItem(KEY_STORE, k); }
+
+function now() { return new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function scrollDown() { msgsEl.scrollTo({ top: msgsEl.scrollHeight, behavior: 'smooth' }); }
+
+function appendUser(text) {
+  welcomeEl.style.display = 'none';
+  const el = document.createElement('div');
+  el.className = 'msg user';
+  el.innerHTML = `<div class="bubble">${esc(text)}</div><div class="msg-meta">${now()}</div>`;
+  msgsEl.appendChild(el);
+  scrollDown();
+}
+
+function startBotBubble() {
+  const el = document.createElement('div');
+  el.className = 'msg bot';
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  el.appendChild(b);
+  msgsEl.appendChild(el);
+  currentBubble = b;
+  currentText = '';
+  scrollDown();
+  return el;
+}
+
+function finishBotBubble(msgEl) {
+  if (!currentBubble) return;
+  const capturedText = currentText;
+  const meta = document.createElement('div');
+  meta.className = 'msg-meta';
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'copy-btn';
+  copyBtn.textContent = '복사';
+  copyBtn.onclick = () => {
+    navigator.clipboard?.writeText(capturedText).then(() => {
+      copyBtn.textContent = '✓ 복사됨';
+      setTimeout(() => copyBtn.textContent = '복사', 1500);
+    });
+  };
+  meta.appendChild(document.createTextNode(now() + ' '));
+  meta.appendChild(copyBtn);
+  msgEl.appendChild(meta);
+  currentBubble = null;
+}
+
+function addThinking(label) {
+  removeThinking();
+  thinkEl = document.createElement('div');
+  thinkEl.className = 'thinking-row';
+  thinkEl.innerHTML = `${esc(label)}<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  msgsEl.appendChild(thinkEl);
+  scrollDown();
+}
+function removeThinking() { thinkEl?.remove(); thinkEl = null; }
+
+function addToolCall(name, args) {
+  const label = TOOL_LABELS[name] || name;
+  const argsStr = Object.entries(args).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(' | ');
+  const el = document.createElement('div');
+  el.className = 'tool-call';
+  el.innerHTML = `
+    <div class="tool-summary">
+      <span>🔧</span><span class="tool-name">${esc(label)}</span>
+      <span class="status-pill running">실행 중</span>
+    </div>
+    <div class="tool-detail">${esc(argsStr)}</div>`;
+  el.querySelector('.tool-summary').onclick = () => el.classList.toggle('open');
+  msgsEl.appendChild(el);
+  scrollDown();
+  return el;
+}
+
+function handleEvent(ev) {
+  switch (ev.type) {
+    case 'text':
+      if (!currentBubble) startBotBubble();
+      currentText += ev.content;
+      currentBubble.textContent = currentText;
+      scrollDown();
+      break;
+    case 'tool_start':
+      removeThinking();
+      pendingTools[ev.name] = addToolCall(ev.name, ev.args);
+      break;
+    case 'tool_end': {
+      const el = pendingTools[ev.name];
+      if (el) {
+        const p = el.querySelector('.status-pill');
+        p.textContent = ev.status === 'ok' ? '완료' : '오류';
+        p.className = `status-pill ${ev.status === 'ok' ? 'ok' : 'err'}`;
+        delete pendingTools[ev.name];
+      }
+      break;
+    }
+    case 'thinking':
+      addThinking('분석 중…');
+      break;
+    case 'done':
+    case 'error':
+      removeThinking();
+      if (ev.type === 'error') {
+        if (!currentBubble) startBotBubble();
+        currentText += `\n\n⚠️ ${ev.message}`;
+        currentBubble.textContent = currentText;
+      }
+      break;
+  }
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  const apiKey = getApiKey();
+  if (!text || isStreaming) return;
+  if (!apiKey) { showKeyModal(); return; }
+
+  isStreaming = true;
+  sendBtn.disabled = true;
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+
+  appendUser(text);
+  addThinking('응답 생성 중…');
+
+  const botMsgEl = document.createElement('div'); // placeholder — will use startBotBubble lazily
+  try {
+    removeThinking();
+    const msgEl = startBotBubble();
+    // replace placeholder
+    Object.assign(botMsgEl, msgEl);
+
+    for await (const ev of runLoop(text, apiKey)) {
+      handleEvent(ev);
+    }
+    finishBotBubble(msgEl);
+  } catch (e) {
+    removeThinking();
+    sessionMessages.pop(); // remove failed user message
+    if (!currentBubble) startBotBubble();
+    currentText = `⚠️ 오류: ${e.message}`;
+    currentBubble.textContent = currentText;
+  } finally {
+    isStreaming = false;
+    sendBtn.disabled = false;
+    inputEl.focus();
+    scrollDown();
+  }
+}
+
+/* Input events */
+inputEl.addEventListener('input', () => {
+  inputEl.style.height = 'auto';
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+});
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+sendBtn.addEventListener('click', sendMessage);
+
+newBtn.addEventListener('click', () => {
+  if (isStreaming) return;
+  sessionMessages = [];
+  msgsEl.innerHTML = '';
+  msgsEl.appendChild(welcomeEl);
+  welcomeEl.style.display = '';
+});
+
+/* Suggestion chips */
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    inputEl.value = c.textContent.replace(/^[🔍✅✍️📝]\s*/, '').trim();
+    inputEl.dispatchEvent(new Event('input'));
+    sendMessage();
+  });
+});
+
+/* API Key Modal */
+function showKeyModal() { keyModal.classList.remove('hidden'); keyInput.focus(); }
+function hideKeyModal() { keyModal.classList.add('hidden'); keyError.textContent = ''; }
+
+keyBtn.addEventListener('click', showKeyModal);
+keyModal.addEventListener('click', e => { if (e.target === keyModal) hideKeyModal(); });
+
+keySave.addEventListener('click', () => {
+  const k = keyInput.value.trim();
+  if (!k.startsWith('sk-ant-') && !k.startsWith('sk-')) {
+    keyError.textContent = '올바른 API 키 형식이 아닙니다 (sk-ant- 로 시작해야 합니다).';
+    return;
+  }
+  saveApiKey(k);
+  keyInput.value = '';
+  hideKeyModal();
+});
+keyInput.addEventListener('keydown', e => { if (e.key === 'Enter') keySave.click(); });
+
+/* Init */
+if (!getApiKey()) showKeyModal();
+</script>
+</body>
+</html>
