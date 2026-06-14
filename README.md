@@ -19,6 +19,17 @@ pip install -r requirements.txt
 
 ## 사용법
 
+### 웹 앱 (아이패드 / 브라우저)
+
+```bash
+export ANTHROPIC_API_KEY=your_api_key_here
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+브라우저 또는 아이패드 Safari에서 `http://서버IP:8000` 접속
+
+### CLI (터미널)
+
 ```bash
 export ANTHROPIC_API_KEY=your_api_key_here
 python research_bot.py
@@ -27,9 +38,11 @@ python research_bot.py
 ## 파일 구성
 
 ```
-research_bot.py   # 메인 CLI 챗 인터페이스 (Claude API 에이전틱 루프)
-tools.py          # 도구 구현체 (Semantic Scholar, arXiv, CrossRef API)
-requirements.txt  # Python 의존성
+app.py                 # FastAPI 웹 서버 (SSE 스트리밍)
+research_bot.py        # CLI 챗 인터페이스
+tools.py               # 도구 구현체 (Semantic Scholar, arXiv, CrossRef API)
+templates/index.html   # 아이패드 최적화 채팅 UI
+requirements.txt       # Python 의존성
 ```
 
 ## 사용 예시
