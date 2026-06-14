@@ -18,9 +18,7 @@
       --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
     html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--bot-fg); -webkit-text-size-adjust: 100%; }
-
     #app { display: flex; flex-direction: column; height: 100dvh; max-width: 800px; margin: 0 auto; }
-
     header {
       background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
@@ -32,30 +30,16 @@
     .h-title { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.2; }
     .h-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
     .h-right { display: flex; gap: 8px; }
-    .btn-sm {
-      background: none; border: 1.5px solid var(--border); border-radius: 8px;
-      padding: 7px 11px; font-size: 13px; font-weight: 500; color: #475569;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
-    }
+    .btn-sm { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 11px; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .btn-sm:active { background: #f1f5f9; }
-
-    #msgs {
-      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: 16px; display: flex; flex-direction: column; gap: 12px;
-    }
-
+    #msgs { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
     .welcome { text-align: center; padding: 28px 8px; color: var(--muted); }
     .welcome-icon { font-size: 48px; margin-bottom: 12px; }
     .welcome h2 { font-size: 18px; font-weight: 600; color: #475569; margin-bottom: 6px; }
     .welcome p { font-size: 14px; line-height: 1.6; }
     .chips { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; text-align: left; }
-    .chip {
-      background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
-      padding: 11px 13px; font-size: 13px; color: #334155; cursor: pointer; text-align: left;
-      line-height: 1.4; -webkit-tap-highlight-color: transparent;
-    }
+    .chip { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 11px 13px; font-size: 13px; color: #334155; cursor: pointer; text-align: left; line-height: 1.4; -webkit-tap-highlight-color: transparent; }
     .chip:active { background: #f8fafc; border-color: var(--primary); }
-
     .msg { display: flex; flex-direction: column; max-width: 88%; animation: fadeUp .18s ease; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
     .msg.user { align-self: flex-end; align-items: flex-end; }
@@ -66,7 +50,6 @@
     .msg-meta { font-size: 11px; color: var(--muted); margin-top: 4px; padding: 0 3px; display: flex; gap: 8px; align-items: center; }
     .copy-btn { background: none; border: none; font-size: 11px; color: var(--muted); cursor: pointer; padding: 1px 5px; border-radius: 4px; }
     .copy-btn:active { background: #f1f5f9; }
-
     .tool-call { background: var(--tool-bg); border: 1px solid var(--tool-bd); border-radius: var(--radius-sm); font-size: 12px; align-self: flex-start; max-width: 88%; overflow: hidden; }
     .tool-summary { display: flex; align-items: center; gap: 6px; padding: 8px 12px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
     .tool-name { font-weight: 600; color: #475569; flex: 1; }
@@ -76,58 +59,30 @@
     .err { background: #fee2e2; color: #b91c1c; }
     .tool-detail { font-family: 'SF Mono', monospace; font-size: 11px; color: #64748b; padding: 0 12px 8px; display: none; }
     .tool-call.open .tool-detail { display: block; }
-
     .thinking-row { display: flex; align-items: center; gap: 8px; background: #eff6ff; color: #3b82f6; border-radius: var(--radius-sm); padding: 9px 13px; font-size: 13px; font-weight: 500; align-self: flex-start; }
     .dots { display: flex; gap: 4px; }
     .dot { width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; animation: bounce .9s infinite; }
     .dot:nth-child(2) { animation-delay: .15s; }
     .dot:nth-child(3) { animation-delay: .3s; }
     @keyframes bounce { 0%,60%,100% { transform: none; } 30% { transform: translateY(-5px); } }
-
-    #input-area {
-      background: var(--surface); border-top: 1px solid var(--border);
-      padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); flex-shrink: 0;
-    }
+    #input-area { background: var(--surface); border-top: 1px solid var(--border); padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); flex-shrink: 0; }
     .input-row { display: flex; align-items: flex-end; gap: 10px; }
-    #msg-input {
-      flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px;
-      padding: 10px 14px; font-size: 15px; font-family: var(--font); line-height: 1.5;
-      resize: none; outline: none; max-height: 140px; overflow-y: auto;
-      -webkit-overflow-scrolling: touch; color: var(--bot-fg);
-    }
+    #msg-input { flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 10px 14px; font-size: 15px; font-family: var(--font); line-height: 1.5; resize: none; outline: none; max-height: 140px; overflow-y: auto; -webkit-overflow-scrolling: touch; color: var(--bot-fg); }
     #msg-input:focus { border-color: var(--primary); }
     #msg-input::placeholder { color: var(--muted); }
-    #send-btn {
-      width: 42px; height: 42px; background: var(--primary); border: none; border-radius: 12px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    #send-btn { width: 42px; height: 42px; background: var(--primary); border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
     #send-btn:active { background: var(--primary-dk); }
     #send-btn:disabled { background: var(--muted); cursor: not-allowed; }
-
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,.45);
-      display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;
-    }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
     .modal-backdrop.hidden { display: none; }
-    .modal {
-      background: var(--surface); border-radius: 20px; padding: 28px 24px;
-      width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
-    }
+    .modal { background: var(--surface); border-radius: 20px; padding: 28px 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
     .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
     .modal p { font-size: 14px; color: #475569; line-height: 1.55; margin-bottom: 18px; }
     .modal label { font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
-    .modal input[type=password] {
-      width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
-      padding: 11px 13px; font-size: 15px; outline: none; font-family: monospace;
-    }
+    .modal input[type=password] { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 13px; font-size: 15px; outline: none; font-family: monospace; }
     .modal input[type=password]:focus { border-color: var(--primary); }
     .modal-hint { font-size: 12px; color: var(--muted); margin-top: 8px; margin-bottom: 20px; }
-    .btn-primary {
-      width: 100%; background: var(--primary); color: #fff; border: none; border-radius: 12px;
-      padding: 13px; font-size: 16px; font-weight: 600; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .btn-primary { width: 100%; background: var(--primary); color: #fff; border: none; border-radius: 12px; padding: 13px; font-size: 16px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .btn-primary:active { background: var(--primary-dk); }
     .modal-error { font-size: 13px; color: #b91c1c; margin-top: 8px; min-height: 18px; }
   </style>
@@ -211,182 +166,320 @@ const TOOL_DEFS = [
   { name: 'get_paper_details', description: 'Semantic Scholar에서 특정 논문 상세 정보 조회.', input_schema: { type: 'object', properties: { paper_id: { type: 'string' } }, required: ['paper_id'] } }
 ];
 
-async function searchPapers(query, max_results=10) {
-  const limit = Math.min(Math.max(1, max_results||10), 20);
-  const res = await fetch(`https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(query)}&limit=${limit}&fields=title,abstract,authors,year,citationCount,externalIds,openAccessPdf,url`);
-  if (!res.ok) return JSON.stringify({ error: `API 오류: ${res.status}`, is_error: true });
+async function searchPapers(query, max_results) {
+  const limit = Math.min(Math.max(1, max_results || 10), 20);
+  const res = await fetch('https://api.semanticscholar.org/graph/v1/paper/search?query=' + encodeURIComponent(query) + '&limit=' + limit + '&fields=title,abstract,authors,year,citationCount,externalIds,openAccessPdf,url');
+  if (!res.ok) return JSON.stringify({ error: 'API error ' + res.status, is_error: true });
   const data = await res.json();
-  const results = (data.data||[]).map(p => ({ title: p.title||'', authors: (p.authors||[]).map(a=>a.name), year: p.year, citation_count: p.citationCount, abstract: (p.abstract||'').slice(0,500), doi: (p.externalIds||{}).DOI||'', open_access_pdf: (p.openAccessPdf||{}).url||'', semantic_scholar_url: p.url||'' }));
-  return JSON.stringify({ results, total_found: data.total||results.length });
+  const results = (data.data || []).map(function(p) { return { title: p.title || '', authors: (p.authors || []).map(function(a) { return a.name; }), year: p.year, citation_count: p.citationCount, abstract: (p.abstract || '').slice(0, 500), doi: (p.externalIds || {}).DOI || '', open_access_pdf: (p.openAccessPdf || {}).url || '', url: p.url || '' }; });
+  return JSON.stringify({ results: results, total_found: data.total || results.length });
 }
 
-async function searchArxiv(query, max_results=10) {
-  const limit = Math.min(Math.max(1, max_results||10), 20);
+async function searchArxiv(query, max_results) {
+  const limit = Math.min(Math.max(1, max_results || 10), 20);
   try {
-    const res = await fetch(`https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&max_results=${limit}&sortBy=relevance&sortOrder=descending`);
-    if (!res.ok) return JSON.stringify({ error: `arXiv 오류: ${res.status}`, is_error: true });
+    const res = await fetch('https://export.arxiv.org/api/query?search_query=all:' + encodeURIComponent(query) + '&max_results=' + limit + '&sortBy=relevance&sortOrder=descending');
+    if (!res.ok) return JSON.stringify({ error: 'arXiv error ' + res.status, is_error: true });
     const xml = new DOMParser().parseFromString(await res.text(), 'text/xml');
-    const results = Array.from(xml.querySelectorAll('entry')).map(e => {
-      const rawId = e.querySelector('id')?.textContent||'';
-      const arxivId = rawId.split('/abs/').pop()||'';
-      return { title: (e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(), authors: Array.from(e.querySelectorAll('author name')).map(n=>n.textContent), year: (e.querySelector('published')?.textContent||'').slice(0,4), arxiv_id: arxivId, abstract: (e.querySelector('summary')?.textContent||'').replace(/\s+/g,' ').trim().slice(0,500), arxiv_url: rawId, pdf_url: `https://arxiv.org/pdf/${arxivId}` };
+    const results = Array.from(xml.querySelectorAll('entry')).map(function(e) {
+      const rawId = (e.querySelector('id') || {}).textContent || '';
+      const arxivId = rawId.split('/abs/').pop() || '';
+      return { title: ((e.querySelector('title') || {}).textContent || '').replace(/\s+/g, ' ').trim(), authors: Array.from(e.querySelectorAll('author name')).map(function(n) { return n.textContent; }), year: ((e.querySelector('published') || {}).textContent || '').slice(0, 4), arxiv_id: arxivId, abstract: ((e.querySelector('summary') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 500), arxiv_url: rawId, pdf_url: 'https://arxiv.org/pdf/' + arxivId };
     });
-    return JSON.stringify({ results });
-  } catch(e) { return JSON.stringify({ error: e.message, is_error: true }); }
+    return JSON.stringify({ results: results });
+  } catch(err) { return JSON.stringify({ error: err.message, is_error: true }); }
 }
 
 async function verifyCitation(doi) {
   const clean = doi.trim().replace(/^https?:\/\/doi\.org\//, '').replace(/^doi:/i, '');
-  const res = await fetch(`https://api.crossref.org/works/${encodeURIComponent(clean)}`);
-  if (res.status===404) return JSON.stringify({ valid: false, message: `DOI 없음: ${clean}` });
-  if (!res.ok) return JSON.stringify({ error: `CrossRef 오류: ${res.status}`, is_error: true });
-  const d = (await res.json()).message||{};
-  const authors = (d.author||[]).map(a=>`${a.given||''} ${a.family||''}`.trim());
-  const year = ((d.issued||{})['date-parts']||[[]])[0][0];
-  const journal = (d['container-title']||[''])[0];
-  const title = (d.title||[''])[0];
-  let authorStr = authors.slice(0,6).join(', '); if (authors.length>6) authorStr+=' et al.';
-  let cite = `${authorStr} (${year||'n.d.'}). "${title}".`;
-  if (journal) { let j=journal; if(d.volume) j+=` ${d.volume}`; if(d.issue) j+=`(${d.issue})`; if(d.page) j+=`: ${d.page}`; cite+=` ${j}.`; }
-  if (d.DOI) cite+=` https://doi.org/${d.DOI}`;
-  return JSON.stringify({ valid: true, doi: clean, title, authors, year, journal, formatted_citation: cite });
+  const res = await fetch('https://api.crossref.org/works/' + encodeURIComponent(clean));
+  if (res.status === 404) return JSON.stringify({ valid: false, message: 'DOI not found: ' + clean });
+  if (!res.ok) return JSON.stringify({ error: 'CrossRef error ' + res.status, is_error: true });
+  const d = (await res.json()).message || {};
+  const authors = (d.author || []).map(function(a) { return ((a.given || '') + ' ' + (a.family || '')).trim(); });
+  const year = (((d.issued || {})['date-parts'] || [[]])[0] || [])[0];
+  const journal = ((d['container-title'] || [''])[0]) || '';
+  const title = ((d.title || [''])[0]) || '';
+  let authorStr = authors.slice(0, 6).join(', ');
+  if (authors.length > 6) authorStr += ' et al.';
+  let cite = authorStr + ' (' + (year || 'n.d.') + '). "' + title + '".';
+  if (journal) { let j = journal; if (d.volume) j += ' ' + d.volume; if (d.issue) j += '(' + d.issue + ')'; if (d.page) j += ': ' + d.page; cite += ' ' + j + '.'; }
+  if (d.DOI) cite += ' https://doi.org/' + d.DOI;
+  return JSON.stringify({ valid: true, doi: clean, title: title, authors: authors, year: year, journal: journal, formatted_citation: cite });
 }
 
 async function getPaperDetails(paper_id) {
   const fields = 'title,abstract,authors,year,citationCount,referenceCount,citations,references,externalIds,openAccessPdf,url,venue,publicationDate,tldr';
-  const res = await fetch(`https://api.semanticscholar.org/graph/v1/paper/${encodeURIComponent(paper_id)}?fields=${fields}`);
-  if (res.status===404) return JSON.stringify({ error: `논문 없음: ${paper_id}`, is_error: true });
-  if (!res.ok) return JSON.stringify({ error: `API 오류: ${res.status}`, is_error: true });
+  const res = await fetch('https://api.semanticscholar.org/graph/v1/paper/' + encodeURIComponent(paper_id) + '?fields=' + fields);
+  if (res.status === 404) return JSON.stringify({ error: 'Paper not found: ' + paper_id, is_error: true });
+  if (!res.ok) return JSON.stringify({ error: 'API error ' + res.status, is_error: true });
   const p = await res.json();
-  return JSON.stringify({ title: p.title||'', authors: (p.authors||[]).map(a=>a.name), year: p.year, venue: p.venue||'', citation_count: p.citationCount, reference_count: p.referenceCount, abstract: p.abstract||'', tldr: (p.tldr||{}).text||'', doi: (p.externalIds||{}).DOI||'', open_access_pdf: (p.openAccessPdf||{}).url||'', semantic_scholar_url: p.url||'', top_citations: (p.citations||[]).slice(0,5).map(c=>({title:c.title,year:c.year})), key_references: (p.references||[]).slice(0,10).map(r=>({title:r.title,year:r.year})) });
+  return JSON.stringify({ title: p.title || '', authors: (p.authors || []).map(function(a) { return a.name; }), year: p.year, venue: p.venue || '', citation_count: p.citationCount, reference_count: p.referenceCount, abstract: p.abstract || '', tldr: (p.tldr || {}).text || '', doi: (p.externalIds || {}).DOI || '', open_access_pdf: (p.openAccessPdf || {}).url || '', url: p.url || '' });
 }
 
 async function executeTool(name, input) {
-  switch(name) {
-    case 'search_papers': return await searchPapers(input.query, input.max_results);
-    case 'search_arxiv': return await searchArxiv(input.query, input.max_results);
-    case 'verify_citation': return await verifyCitation(input.doi);
-    case 'get_paper_details': return await getPaperDetails(input.paper_id);
-    default: return JSON.stringify({ error: `Unknown tool: ${name}`, is_error: true });
-  }
+  if (name === 'search_papers') return searchPapers(input.query, input.max_results);
+  if (name === 'search_arxiv') return searchArxiv(input.query, input.max_results);
+  if (name === 'verify_citation') return verifyCitation(input.doi);
+  if (name === 'get_paper_details') return getPaperDetails(input.paper_id);
+  return JSON.stringify({ error: 'Unknown tool: ' + name, is_error: true });
 }
 
-async function* streamClaude(messages, apiKey) {
-  const res = await fetch(API_URL, { method: 'POST', headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' }, body: JSON.stringify({ model: MODEL, max_tokens: 16000, stream: true, system: SYSTEM_PROMPT, tools: TOOL_DEFS, messages }) });
-  if (!res.ok) { let msg=`API 오류 ${res.status}`; try { const e=await res.json(); msg=e.error?.message||msg; } catch {} throw new Error(msg); }
-  const reader = res.body.getReader(); const dec = new TextDecoder(); let buf=''; const blocks={}; let stopReason='end_turn';
+async function callClaudeStream(messages, apiKey, onText, onDone) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: MODEL, max_tokens: 16000, stream: true, system: SYSTEM_PROMPT, tools: TOOL_DEFS, messages: messages })
+  });
+  if (!res.ok) {
+    let msg = 'API error ' + res.status;
+    try { const e = await res.json(); msg = (e.error && e.error.message) || msg; } catch(e2) {}
+    throw new Error(msg);
+  }
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  const blocks = {};
+  let stopReason = 'end_turn';
   while (true) {
-    const {done,value} = await reader.read(); if (done) break;
-    buf += dec.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop();
-    for (const line of lines) {
+    const chunk = await reader.read();
+    if (chunk.done) break;
+    buf += dec.decode(chunk.value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
       if (!line.startsWith('data: ')) continue;
-      let data; try { data=JSON.parse(line.slice(6)); } catch { continue; }
-      switch(data.type) {
-        case 'content_block_start': blocks[data.index]={...data.content_block,_json:''}; break;
-        case 'content_block_delta': { const b=blocks[data.index]; if(!b) break; const d=data.delta; if(d.type==='text_delta'){b.text=(b.text||'')+d.text; if(b.type==='text') yield {type:'text',content:d.text};} else if(d.type==='input_json_delta'){b._json+=d.partial_json;} else if(d.type==='thinking_delta'){b.thinking=(b.thinking||'')+d.thinking;} else if(d.type==='signature_delta'){b.signature=d.signature;} break; }
-        case 'content_block_stop': { const b=blocks[data.index]; if(b?.type==='tool_use'){try{b.input=JSON.parse(b._json||'{}');}catch{b.input={};}} if(b) delete b._json; break; }
-        case 'message_delta': if(data.delta?.stop_reason) stopReason=data.delta.stop_reason; break;
+      let data;
+      try { data = JSON.parse(line.slice(6)); } catch(e) { continue; }
+      if (data.type === 'content_block_start') {
+        blocks[data.index] = Object.assign({}, data.content_block, { _json: '' });
+      } else if (data.type === 'content_block_delta') {
+        const b = blocks[data.index];
+        if (!b) continue;
+        if (data.delta.type === 'text_delta') {
+          b.text = (b.text || '') + data.delta.text;
+          if (b.type === 'text') onText(data.delta.text);
+        } else if (data.delta.type === 'input_json_delta') {
+          b._json += data.delta.partial_json;
+        }
+      } else if (data.type === 'content_block_stop') {
+        const b = blocks[data.index];
+        if (b && b.type === 'tool_use') {
+          try { b.input = JSON.parse(b._json || '{}'); } catch(e) { b.input = {}; }
+        }
+        if (b) delete b._json;
+      } else if (data.type === 'message_delta') {
+        if (data.delta && data.delta.stop_reason) stopReason = data.delta.stop_reason;
       }
     }
   }
-  const content=Object.keys(blocks).sort((a,b)=>+a-+b).map(k=>{const b={...blocks[k]};delete b._json;return b;});
-  yield { type:'message_done', content, stopReason };
+  const content = Object.keys(blocks).sort(function(a, b) { return +a - +b; }).map(function(k) { const b = Object.assign({}, blocks[k]); delete b._json; return b; });
+  onDone(content, stopReason);
 }
 
-let sessionMessages=[];
+let sessionMessages = [];
 
-async function* runLoop(userMessage, apiKey) {
-  sessionMessages.push({role:'user',content:userMessage});
-  while (true) {
-    let assistantContent=[]; let stopReason='end_turn';
-    for await (const ev of streamClaude(sessionMessages,apiKey)) {
-      if(ev.type==='text') yield ev;
-      else if(ev.type==='message_done'){assistantContent=ev.content;stopReason=ev.stopReason;}
+function getApiKey() { return localStorage.getItem(KEY_STORE) || ''; }
+function saveApiKey(k) { localStorage.setItem(KEY_STORE, k); }
+
+const msgsEl = document.getElementById('msgs');
+const welcomeEl = document.getElementById('welcome');
+const inputEl = document.getElementById('msg-input');
+const sendBtn = document.getElementById('send-btn');
+const newBtn = document.getElementById('new-btn');
+const keyBtn = document.getElementById('key-btn');
+const keyModal = document.getElementById('key-modal');
+const keyInput = document.getElementById('key-input');
+const keySave = document.getElementById('key-save');
+const keyError = document.getElementById('key-error');
+
+const TOOL_LABELS = { search_papers: '논문 검색 (Semantic Scholar)', search_arxiv: 'arXiv 검색', verify_citation: '인용 검증 (CrossRef)', get_paper_details: '논문 상세 조회' };
+
+let isStreaming = false;
+let currentBubble = null;
+let currentText = '';
+let thinkEl = null;
+const pendingTools = {};
+
+function nowStr() { return new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function scrollDown() { msgsEl.scrollTo({ top: msgsEl.scrollHeight, behavior: 'smooth' }); }
+
+function appendUser(text) {
+  welcomeEl.style.display = 'none';
+  const el = document.createElement('div');
+  el.className = 'msg user';
+  el.innerHTML = '<div class="bubble">' + escHtml(text) + '</div><div class="msg-meta">' + nowStr() + '</div>';
+  msgsEl.appendChild(el);
+  scrollDown();
+}
+
+function startBotBubble() {
+  const el = document.createElement('div');
+  el.className = 'msg bot';
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  el.appendChild(b);
+  msgsEl.appendChild(el);
+  currentBubble = b;
+  currentText = '';
+  scrollDown();
+  return el;
+}
+
+function finishBotBubble(msgEl) {
+  if (!currentBubble) return;
+  const capturedText = currentText;
+  const meta = document.createElement('div');
+  meta.className = 'msg-meta';
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'copy-btn';
+  copyBtn.textContent = '복사';
+  copyBtn.onclick = function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(capturedText).then(function() {
+        copyBtn.textContent = '✓ 복사됨';
+        setTimeout(function() { copyBtn.textContent = '복사'; }, 1500);
+      });
     }
-    sessionMessages.push({role:'assistant',content:assistantContent});
-    if(stopReason==='end_turn'){yield{type:'done'};return;}
-    if(stopReason==='tool_use'){
-      const toolResults=[];
-      for(const block of assistantContent){
-        if(block.type!=='tool_use') continue;
-        yield{type:'tool_start',name:block.name,args:block.input||{}};
-        let result; try{result=await executeTool(block.name,block.input||{});yield{type:'tool_end',name:block.name,status:'ok'};}catch(e){result=JSON.stringify({error:e.message,is_error:true});yield{type:'tool_end',name:block.name,status:'error'};}
-        toolResults.push({type:'tool_result',tool_use_id:block.id,content:result});
-      }
-      sessionMessages.push({role:'user',content:toolResults}); yield{type:'thinking'}; continue;
-    }
-    if(stopReason==='pause_turn') continue;
-    yield{type:'done'}; return;
-  }
+  };
+  meta.appendChild(document.createTextNode(nowStr() + ' '));
+  meta.appendChild(copyBtn);
+  msgEl.appendChild(meta);
+  currentBubble = null;
 }
 
-const msgsEl=document.getElementById('msgs'),welcomeEl=document.getElementById('welcome'),inputEl=document.getElementById('msg-input'),sendBtn=document.getElementById('send-btn'),newBtn=document.getElementById('new-btn'),keyBtn=document.getElementById('key-btn'),keyModal=document.getElementById('key-modal'),keyInput=document.getElementById('key-input'),keySave=document.getElementById('key-save'),keyError=document.getElementById('key-error');
-const TOOL_LABELS={search_papers:'논문 검색 (Semantic Scholar)',search_arxiv:'arXiv 검색',verify_citation:'인용 검증 (CrossRef)',get_paper_details:'논문 상세 조회'};
-let isStreaming=false,currentBubble=null,currentText='',thinkEl=null;
-const pendingTools={};
-const getApiKey=()=>localStorage.getItem(KEY_STORE)||'';
-const saveApiKey=k=>localStorage.setItem(KEY_STORE,k);
-const now=()=>new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const scrollDown=()=>msgsEl.scrollTo({top:msgsEl.scrollHeight,behavior:'smooth'});
+function addThinking(label) {
+  removeThinking();
+  thinkEl = document.createElement('div');
+  thinkEl.className = 'thinking-row';
+  thinkEl.innerHTML = escHtml(label) + '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  msgsEl.appendChild(thinkEl);
+  scrollDown();
+}
+function removeThinking() { if (thinkEl) { thinkEl.remove(); thinkEl = null; } }
 
-function appendUser(text){welcomeEl.style.display='none';const el=document.createElement('div');el.className='msg user';el.innerHTML=`<div class="bubble">${esc(text)}</div><div class="msg-meta">${now()}</div>`;msgsEl.appendChild(el);scrollDown();}
-
-function startBotBubble(){const el=document.createElement('div');el.className='msg bot';const b=document.createElement('div');b.className='bubble';el.appendChild(b);msgsEl.appendChild(el);currentBubble=b;currentText='';scrollDown();return el;}
-
-function finishBotBubble(msgEl){if(!currentBubble) return;const capturedText=currentText;const meta=document.createElement('div');meta.className='msg-meta';const copyBtn=document.createElement('button');copyBtn.className='copy-btn';copyBtn.textContent='복사';copyBtn.onclick=()=>{navigator.clipboard?.writeText(capturedText).then(()=>{copyBtn.textContent='✓ 복사됨';setTimeout(()=>copyBtn.textContent='복사',1500);});};meta.appendChild(document.createTextNode(now()+' '));meta.appendChild(copyBtn);msgEl.appendChild(meta);currentBubble=null;}
-
-function addThinking(label){removeThinking();thinkEl=document.createElement('div');thinkEl.className='thinking-row';thinkEl.innerHTML=`${esc(label)}<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;msgsEl.appendChild(thinkEl);scrollDown();}
-function removeThinking(){thinkEl?.remove();thinkEl=null;}
-
-function addToolCall(name,args){const label=TOOL_LABELS[name]||name;const argsStr=Object.entries(args).map(([k,v])=>`${k}: ${JSON.stringify(v)}`).join(' | ');const el=document.createElement('div');el.className='tool-call';el.innerHTML=`<div class="tool-summary"><span>🔧</span><span class="tool-name">${esc(label)}</span><span class="status-pill running">실행 중</span></div><div class="tool-detail">${esc(argsStr)}</div>`;el.querySelector('.tool-summary').onclick=()=>el.classList.toggle('open');msgsEl.appendChild(el);scrollDown();return el;}
-
-function handleEvent(ev){
-  switch(ev.type){
-    case 'text': if(!currentBubble) startBotBubble(); currentText+=ev.content; currentBubble.textContent=currentText; scrollDown(); break;
-    case 'tool_start': removeThinking(); pendingTools[ev.name]=addToolCall(ev.name,ev.args); break;
-    case 'tool_end': { const el=pendingTools[ev.name]; if(el){const p=el.querySelector('.status-pill');p.textContent=ev.status==='ok'?'완료':'오류';p.className=`status-pill ${ev.status==='ok'?'ok':'err'}`;delete pendingTools[ev.name];} break; }
-    case 'thinking': addThinking('분석 중…'); break;
-    case 'done': case 'error': removeThinking(); if(ev.type==='error'){if(!currentBubble) startBotBubble();currentText+=`\n\n⚠️ ${ev.message}`;currentBubble.textContent=currentText;} break;
-  }
+function addToolCall(name, args) {
+  const label = TOOL_LABELS[name] || name;
+  const argsStr = Object.keys(args).map(function(k) { return k + ': ' + JSON.stringify(args[k]); }).join(' | ');
+  const el = document.createElement('div');
+  el.className = 'tool-call';
+  el.innerHTML = '<div class="tool-summary"><span>🔧</span><span class="tool-name">' + escHtml(label) + '</span><span class="status-pill running">실행 중</span></div><div class="tool-detail">' + escHtml(argsStr) + '</div>';
+  el.querySelector('.tool-summary').onclick = function() { el.classList.toggle('open'); };
+  msgsEl.appendChild(el);
+  scrollDown();
+  return el;
 }
 
-async function sendMessage(){
-  const text=inputEl.value.trim(); const apiKey=getApiKey();
-  if(!text||isStreaming) return; if(!apiKey){showKeyModal();return;}
-  isStreaming=true; sendBtn.disabled=true; inputEl.value=''; inputEl.style.height='auto';
-  appendUser(text); addThinking('응답 생성 중…');
-  try{
-    removeThinking(); const msgEl=startBotBubble();
-    for await (const ev of runLoop(text,apiKey)) handleEvent(ev);
-    finishBotBubble(msgEl);
-  } catch(e){
-    removeThinking(); sessionMessages.pop();
-    if(!currentBubble) startBotBubble();
-    currentText=`⚠️ 오류: ${e.message}`; currentBubble.textContent=currentText;
-  } finally{
-    isStreaming=false; sendBtn.disabled=false; inputEl.focus(); scrollDown();
-  }
-}
+function showKeyModal() { keyModal.classList.remove('hidden'); keyInput.focus(); }
+function hideKeyModal() { keyModal.classList.add('hidden'); keyError.textContent = ''; }
 
-inputEl.addEventListener('input',()=>{inputEl.style.height='auto';inputEl.style.height=Math.min(inputEl.scrollHeight,140)+'px';});
-inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
-sendBtn.addEventListener('click',sendMessage);
-newBtn.addEventListener('click',()=>{if(isStreaming)return;sessionMessages=[];msgsEl.innerHTML='';msgsEl.appendChild(welcomeEl);welcomeEl.style.display='';});
-document.querySelectorAll('.chip').forEach(c=>{c.addEventListener('click',()=>{inputEl.value=c.textContent.replace(/^[🔍✅✍️📝]\s*/,'').trim();inputEl.dispatchEvent(new Event('input'));sendMessage();});});
-
-const showKeyModal=()=>{keyModal.classList.remove('hidden');keyInput.focus();};
-const hideKeyModal=()=>{keyModal.classList.add('hidden');keyError.textContent='';};
-keyBtn.addEventListener('click',showKeyModal);
-keyModal.addEventListener('click',e=>{if(e.target===keyModal)hideKeyModal();});
-keySave.addEventListener('click',()=>{
-  const k=keyInput.value.trim();
-  if(!k.startsWith('sk-ant-')&&!k.startsWith('sk-')){keyError.textContent='올바른 API 키 형식이 아닙니다 (sk-ant- 로 시작해야 합니다).';return;}
-  saveApiKey(k);keyInput.value='';hideKeyModal();
+keyBtn.addEventListener('click', showKeyModal);
+keyModal.addEventListener('click', function(e) { if (e.target === keyModal) hideKeyModal(); });
+keySave.addEventListener('click', function() {
+  const k = keyInput.value.trim();
+  if (!k) { keyError.textContent = 'API 키를 입력하세요.'; return; }
+  saveApiKey(k);
+  keyInput.value = '';
+  hideKeyModal();
 });
-keyInput.addEventListener('keydown',e=>{if(e.key==='Enter')keySave.click();});
+keyInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') keySave.click(); });
 
-if(!getApiKey()) showKeyModal();
-<\/script>
+newBtn.addEventListener('click', function() {
+  if (isStreaming) return;
+  sessionMessages = [];
+  msgsEl.innerHTML = '';
+  msgsEl.appendChild(welcomeEl);
+  welcomeEl.style.display = '';
+});
+
+document.querySelectorAll('.chip').forEach(function(c) {
+  c.addEventListener('click', function() {
+    inputEl.value = c.textContent.trim();
+    inputEl.dispatchEvent(new Event('input'));
+    sendMessage();
+  });
+});
+
+inputEl.addEventListener('input', function() {
+  inputEl.style.height = 'auto';
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+});
+inputEl.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+sendBtn.addEventListener('click', sendMessage);
+
+function runAgenticLoop(messages, apiKey, onText, onToolStart, onToolEnd, onThinking, onError, onComplete) {
+  callClaudeStream(messages, apiKey, onText, function(content, stopReason) {
+    messages.push({ role: 'assistant', content: content });
+    if (stopReason === 'end_turn' || stopReason === 'pause_turn') {
+      if (stopReason === 'end_turn') { onComplete(); return; }
+      runAgenticLoop(messages, apiKey, onText, onToolStart, onToolEnd, onThinking, onError, onComplete);
+      return;
+    }
+    if (stopReason === 'tool_use') {
+      const toolBlocks = content.filter(function(b) { return b.type === 'tool_use'; });
+      const toolResults = [];
+      let pending = toolBlocks.length;
+      if (pending === 0) { onComplete(); return; }
+      toolBlocks.forEach(function(block) {
+        onToolStart(block.name, block.input || {});
+        executeTool(block.name, block.input || {}).then(function(result) {
+          onToolEnd(block.name, 'ok');
+          toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: result });
+          pending--;
+          if (pending === 0) {
+            messages.push({ role: 'user', content: toolResults });
+            onThinking();
+            runAgenticLoop(messages, apiKey, onText, onToolStart, onToolEnd, onThinking, onError, onComplete);
+          }
+        }).catch(function(err) {
+          onToolEnd(block.name, 'error');
+          toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: JSON.stringify({ error: err.message, is_error: true }) });
+          pending--;
+          if (pending === 0) {
+            messages.push({ role: 'user', content: toolResults });
+            onThinking();
+            runAgenticLoop(messages, apiKey, onText, onToolStart, onToolEnd, onThinking, onError, onComplete);
+          }
+        });
+      });
+    }
+  }).catch(function(err) { onError(err.message); });
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  const apiKey = getApiKey();
+  if (!text || isStreaming) return;
+  if (!apiKey) { showKeyModal(); return; }
+
+  isStreaming = true;
+  sendBtn.disabled = true;
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+
+  appendUser(text);
+  addThinking('응답 생성 중…');
+  sessionMessages.push({ role: 'user', content: text });
+
+  removeThinking();
+  const msgEl = startBotBubble();
+
+  runAgenticLoop(
+    sessionMessages, apiKey,
+    function(textChunk) { currentText += textChunk; currentBubble.textContent = currentText; scrollDown(); },
+    function(name, args) { removeThinking(); pendingTools[name] = addToolCall(name, args); },
+    function(name, status) { const el = pendingTools[name]; if (el) { const p = el.querySelector('.status-pill'); p.textContent = status === 'ok' ? '완료' : '오류'; p.className = 'status-pill ' + (status === 'ok' ? 'ok' : 'err'); delete pendingTools[name]; } },
+    function() { addThinking('분석 중…'); },
+    function(errMsg) { removeThinking(); sessionMessages.pop(); if (!currentBubble) startBotBubble(); currentText = '⚠️ 오류: ' + errMsg; currentBubble.textContent = currentText; isStreaming = false; sendBtn.disabled = false; scrollDown(); },
+    function() { removeThinking(); finishBotBubble(msgEl); isStreaming = false; sendBtn.disabled = false; inputEl.focus(); scrollDown(); }
+  );
+}
+
+if (!getApiKey()) showKeyModal();
+</script>
 </body>
 </html>
